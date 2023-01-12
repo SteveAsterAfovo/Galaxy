@@ -1,0 +1,67 @@
+      `
+
+                );
+
+                console.log(shader.vertexShader);
+
+                shader.fragmentShader = `
+
+      varying vec3 vColor;
+
+      ${shader.fragmentShader}
+
+    `.replace(
+
+                    `#include <clipping_planes_fragment>`,
+
+                    `#include <clipping_planes_fragment>
+
+        float d = length(gl_PointCoord.xy - 0.5);
+
+        //if (d > 0.5) discard;
+
+      `
+
+                ).replace(
+
+                    `vec4 diffuseColor = vec4( diffuse, opacity );`,
+
+                    `vec4 diffuseColor = vec4( vColor, smoothstep(0.5, 0.1, d)/* * 0.5 + 0.5*/ );`
+
+                );
+
+                console.log(shader.fragmentShader);
+
+            }
+
+        });
+
+        let p = new THREE.Points(g, m);
+
+        p.rotation.order = "ZYX";
+
+        p.rotation.z = 0.2;
+
+        scene.add(p)
+
+        let clock = new THREE.Clock();
+
+        renderer.setAnimationLoop(() => {
+
+            controls.update();
+
+            let t = clock.getElapsedTime() * 0.5;
+
+            gu.time.value = t * Math.PI;
+
+            p.rotation.y = t * 0.05;
+
+            renderer.render(scene, camera);
+
+        });
+
+    </script>
+
+</body>
+
+</html>
